@@ -3,21 +3,23 @@ namespace ExercicioLinq
 {
     public class ExercicioLinqTests
     {
-        private List<Produto> produtos;
+        private readonly List<Produto> produtos;
 
         public ExercicioLinqTests()
         {
-            produtos = new List<Produto>();
-            produtos.Add(new Produto { Nome = "Sabão", Valor = 1.1m, Quantidade = 10 });
-            produtos.Add(new Produto { Nome = "Detergente de prato", Valor = 10, Quantidade = 9 });
-            produtos.Add(new Produto { Nome = "Água", Valor = (decimal)8.2f, Quantidade = 8 });
-            produtos.Add(new Produto { Nome = "Esponja", Valor = (decimal)5.5, Quantidade = 7 });
-            produtos.Add(new Produto { Nome = "Água sanitária", Valor = (decimal)30.30d, Quantidade = 6 });
-            produtos.Add(new Produto { Nome = "Vassoura", Valor = 3.3m, Quantidade = 5 });
-            produtos.Add(new Produto { Nome = "Desinfetante", Valor = 4.4m, Quantidade = 4 });
-            produtos.Add(new Produto { Nome = "Pano de chão", Valor = 5.5m, Quantidade = 3 });
-            produtos.Add(new Produto { Nome = "Purificador de água", Valor = 6.6m, Quantidade = 2 });
-            produtos.Add(new Produto { Nome = "Balde", Valor = 10.1m, Quantidade = 1 });
+            produtos =
+            [
+                new (){ Nome = "Sabão", Valor = 1.1m, Quantidade = 10 },
+                new (){ Nome = "Detergente de prato", Valor = 10, Quantidade = 9 },
+                new (){ Nome = "Água", Valor = (decimal)8.2f, Quantidade = 8 },
+                new (){ Nome = "Esponja", Valor = (decimal)5.5, Quantidade = 7 },
+                new (){ Nome = "Água sanitária", Valor = (decimal)30.30d, Quantidade = 6 },
+                new (){ Nome = "Vassoura", Valor = 3.3m, Quantidade = 5 },
+                new (){ Nome = "Desinfetante", Valor = 4.4m, Quantidade = 4 },
+                new (){ Nome = "Pano de chão", Valor = 5.5m, Quantidade = 3 },
+                new (){ Nome = "Purificador de água", Valor = 6.6m, Quantidade = 2 },
+                new (){ Nome = "Balde", Valor = 10.1m, Quantidade = 1 },
+            ];
         }
 
 
@@ -26,8 +28,7 @@ namespace ExercicioLinq
         public void Test1()
         {
             int quantidade = produtos
-                .Where(x => x.Nome.ToLower().Contains("água".ToLower()))
-                .Count();
+                .Count(x => x.Nome.Contains("água", StringComparison.CurrentCultureIgnoreCase));
             Assert.Equal(3, quantidade);
         }
 
@@ -57,8 +58,7 @@ namespace ExercicioLinq
         public void Test4()
         {
             Produto produto = produtos
-                .OrderByDescending (x => x.Valor)
-                .First();
+                .MaxBy(x => x.Valor)!;
 
             Assert.Equal("Água sanitária", produto.Nome);
         }
@@ -66,9 +66,8 @@ namespace ExercicioLinq
         [Fact(DisplayName = "Produto mais barato")]
         public void Test5()
         {
-            Produto produto = produtos 
-                .OrderByDescending (x => x.Valor)
-                .Last();
+            Produto produto = produtos
+                .MinBy(x => x.Valor)!;               
 
             Assert.Equal("Sabão", produto.Nome);
         }
@@ -86,7 +85,7 @@ namespace ExercicioLinq
         public void Test7()
         {
             int quantidade = produtos
-                .Sum(x => (int)x.Quantidade);
+                .Sum(x => x.Quantidade);
 
             Assert.Equal(55, quantidade);
         }
@@ -95,7 +94,7 @@ namespace ExercicioLinq
         public void Test8()
         {
             IEnumerable<string> nomeDosProdutos = produtos
-                .Where(x => x.Valor < 10.1m)
+                .Where(x => x.Valor <= 10m)
                 .Select(x => x.Nome);
 
 
@@ -118,7 +117,7 @@ namespace ExercicioLinq
         public void Test10()
         {
             bool existe = produtos
-                .Any(x => x.Nome.Contains("pão"));
+                .Any(x => x.Nome.Contains("pão", StringComparison.CurrentCultureIgnoreCase));
                 
 
             Assert.False(existe);
@@ -128,7 +127,7 @@ namespace ExercicioLinq
 
     public class Produto
     {
-        public string Nome { get; set; }
+        public string Nome { get; set; } = string.Empty!;
         public decimal Valor { get; set; }
         public int Quantidade { get; set; }
     }
